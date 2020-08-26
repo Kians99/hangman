@@ -15,22 +15,43 @@ class Game
     puts "\nHi! Welcome to hangman. The computer just thought of a word that you will
 have to guess. Here is the board: "
     board.print_board
-    puts "Please insert your guess as a single character like \"a\". Enjoy!\n "
+    puts "\nPlease insert your guess as a single character like \"a\". Enjoy!\n "
     main_game_loop
   end
 
+  def game_over?
+    false
+  end
+
+  def match?(guess)
+    board.contains_character?(guess) != []
+  end
+
+  def guessed_already?(guess)
+    player.already_guessed.include?(guess)
+  end
 
   def main_game_loop
-    if player.make_guess
-      puts "Great! Beep Boop. Here is the new board:"
+  until game_over?
+    guess = player.make_guess
+    if player.valid_guess(guess)
+      player.already_guessed.push(guess)
+      if match?(guess) && !guessed_already?(guess)
+        arr_of_matching_indices = board.contains_character?(guess)
+        board.change_board(arr_of_matching_indices, guess)
+        puts "Awesome—you got a match!"
+      elsif guessed_already?
+        puts "You guessed that letter already!"
+      else
+        puts "No match—Keep Trying!"
+      end
     else
       puts "Hmm. That's not a character! Try again."
     end
     
-    #board.contains_character?(guess)
-
   end
 
+  end
 end
 
 
