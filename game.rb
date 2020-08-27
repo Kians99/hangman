@@ -6,8 +6,7 @@ class Game
   attr_reader :rand_selected_word, :board, :player
 
   def initialize
-    #File.open('5desk.txt', 'r').readlines.sample.chomp
-    @rand_selected_word = "Praxiteles".downcase
+    @rand_selected_word = File.open('5desk.txt', 'r').readlines.sample.chomp.downcase
     @board = Board.new(rand_selected_word)
     @player = Player.new
   end
@@ -31,26 +30,34 @@ have to guess. Here is the board: "
   def already_inputted(guess)
     player.already_guessed.include?(guess)
   end
+
+  def the_input_matches(guess)
+    puts "Awesome—you got a match!"
+    arr_of_matching_indices = board.contains_character?(guess)
+    board.change_board(arr_of_matching_indices, guess)
+  end
   
   def main_game_loop
   
   until game_over?
     guess = player.make_guess.downcase
+    puts "————————————————————————————————————————–"
     if player.valid_guess(guess) && !self.already_inputted(guess)
-      player.already_guessed.push(guess)
+      arr_of_guesses = player.already_guessed.push(guess)
       if match?(guess)
-        arr_of_matching_indices = board.contains_character?(guess)
-        board.change_board(arr_of_matching_indices, guess)
-        puts "Awesome—you got a match!"
+        the_input_matches(guess)
+        print "Previous Guesses: #{arr_of_guesses.join(',')}" + "\n"
       else
         puts "No match—Keep Trying!" 
+        board.print_board
+        print "Previous Guesses: #{arr_of_guesses.join(',')}" + "\n"
       end
     elsif already_inputted(guess)
       puts "You guessed that letter already!"
     else
       puts "Hmm. That's not a character! Try again."
     end
-    
+    puts "————————————————————————————————————————–"
   end
 
   end
