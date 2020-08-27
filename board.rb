@@ -1,5 +1,4 @@
 require_relative 'computer'
-require_relative 'letter'
 
 class Board
 
@@ -13,7 +12,7 @@ class Board
   def print_board
     puts "\n"
     board_print_out.each { |char| print char }
-    puts "\n"
+    print "\n"
   end
 
   def change_board(array_of_indices, char_inp) 
