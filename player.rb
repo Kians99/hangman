@@ -1,10 +1,11 @@
 class Player
 
-  attr_accessor :guesses_left, :already_guessed
+  attr_accessor :guesses_left, :already_guessed, :correctly_guessed
 
   def initialize(length_of_hidden_word)
     @guesses_left = length_of_hidden_word * 2
     @already_guessed = []
+    @correctly_guessed = []
   end
 
   def make_guess
