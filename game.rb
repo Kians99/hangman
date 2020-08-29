@@ -7,8 +7,7 @@ class Game
   attr_accessor :rand_selected_word, :board, :player, :number_of_saves
 
   def initialize
-    #File.open('5desk.txt', 'r').readlines.sample.chomp.downcase
-    @rand_selected_word = "Someday".downcase
+    @rand_selected_word = File.open('5desk.txt', 'r').readlines.sample.chomp.downcase
     @board = Board.new(rand_selected_word)
     @player = Player.new(rand_selected_word.length)
   end
@@ -34,7 +33,7 @@ will overwrite your previous save. Have fun!"
   end
 
   def already_inputted(guess)
-    player.already_guessed.include?(guess)
+    player.all_guesses.include?(guess)
   end
 
   def the_input_matches(guess)
@@ -73,9 +72,6 @@ will overwrite your previous save. Have fun!"
     game = YAML.load(File.open("saved.txt", "r") { |file| file.read })
     self.rand_selected_word = game.rand_selected_word
     self.board = game.board
-    puts "YEEEEHAWW"
-    puts "#{self.player.already_guessed}"
-    puts "#{game.player.already_guessed}"
     self.player = game.player
     
     
@@ -89,23 +85,26 @@ will overwrite your previous save. Have fun!"
       load_saved_game if guess.casecmp("Continue").zero?
       if player.valid_guess(guess) && !self.already_inputted(guess)
         player.guesses_left -= 1
-        p player.correctly_guessed
         if match?(guess) && !player.correctly_guessed.include?(guess)
+          puts guess
           player.correctly_guessed.push(guess)
+          player.all_guesses = player.already_guessed.concat(player.correctly_guessed)
           the_input_matches(guess)
         else
           puts "No match—Keep Trying!" 
           add_to_guesses(guess)
           board.print_board
         end
-        print "Incorrect Guesses: #{player.already_guessed.join(',')}  " + "Guesses Remaining: #{player.guesses_left}" + "\n"
+        print "Incorrect Guesses: #{player.already_guessed.uniq.join(',')}  " + "Guesses Remaining: #{player.guesses_left}" + "\n"
       elsif already_inputted(guess)
         puts "You guessed that letter already—You still lose a guess!"
         player.guesses_left -= 1
         board.print_board
-        print "Incorrect Guesses: #{player.already_guessed.join(',')}  " + "Guesses Remaining: #{player.guesses_left}" + "\n"
-      else
+        print "Incorrect Guesses: #{player.already_guessed.uniq.join(',')}  " + "Guesses Remaining: #{player.guesses_left}" + "\n"
+      elsif !guess.casecmp("continue").zero? && !guess.casecmp("save").zero?
         puts "Hmm. That's not a character! Try again."
+      else
+        puts "You loaded your last saved game. Guess away!"
       end
       puts "————————————————————————————————————————————————————————"
     end
