@@ -105,6 +105,8 @@ will overwrite your previous save. Have fun!"
         puts "Hmm. That's not a character! Try again."
       else
         puts "You loaded your last saved game. Guess away!"
+        board.print_board
+        print "Incorrect Guesses: #{player.already_guessed.uniq.join(',')}  " + "Guesses Remaining: #{player.guesses_left}" + "\n"
       end
       puts "————————————————————————————————————————————————————————"
     end
